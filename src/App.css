@@ -1,0 +1,132 @@
+/* App.css */
+
+/* Contenedor principal */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.header {
+  background: #0d6efd; /* azul TIGO */
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.nav a {
+  color: white;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+/* Contenido principal */
+.content {
+  flex: 1;
+  padding: 40px 20px;
+  text-align: center;
+  background: #f8f9fa;
+}
+
+.content h1, .content h2 {
+  color: #0d6efd;
+  margin-bottom: 15px;
+}
+
+.content p, .content ul {
+  color: #212529;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 15px auto;
+}
+
+.content ul {
+  text-align: left;
+  padding-left: 20px;
+}
+
+.btn {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.btn:hover {
+  background: #0b5ed7;
+}
+
+/* Footer */
+/* Footer.css */
+.footer {
+  background-color: #0d6efd; /* Azul Tigo */
+  color: white;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-text {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.footer-socials a {
+  color: white;
+  margin: 0 10px;
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+
+.footer-socials a:hover {
+  color: #ffc107; /* amarillo Tigo */
+  transform: scale(1.2);
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav {
+    margin-top: 10px;
+  }
+  .nav a {
+    display: block;
+    margin: 5px 0;
+  }
+  .content {
+    padding: 20px 15px;
+  }
+  .chat-modal {
+    width: 90%;
+    bottom: 80px;
+  }
+    .footer {
+    padding: 15px;
+  }
+  .footer-socials a {
+    margin: 0 5px;
+    font-size: 18px;
+  }
+}

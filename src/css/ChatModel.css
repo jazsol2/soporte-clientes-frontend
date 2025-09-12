@@ -1,0 +1,111 @@
+/* Modal fondo semitransparente */
+.chat-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: flex-end; /* el chat se abre a la derecha */
+  z-index: 999;
+}
+
+/* Ventana del chat */
+.chat-modal {
+  width: 350px;
+  max-width: 90%;
+  height: 500px;
+  background-color: #fff;
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  margin: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header del chat */
+.chat-header {
+  background-color: #0d6efd;
+  color: white;
+  padding: 15px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Botón cerrar */
+.chat-close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Área de mensajes */
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background-color: #f1f1f1;
+}
+
+/* Mensajes del asistente */
+.chat-message.bot {
+  background-color: #e1f0ff;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+
+/* Mensajes del usuario */
+.chat-message.user {
+  background-color: #0d6efd;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  align-self: flex-end;
+  max-width: 80%;
+}
+
+/* Input y botón enviar */
+.chat-input-container {
+  display: flex;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.chat-send-btn {
+  background-color: #0d6efd;
+  border: none;
+  color: white;
+  padding: 0 20px;
+  cursor: pointer;
+}
+
+.chat-send-btn:hover {
+  background-color: #0b5ed7;
+}
+
+/* Scroll personalizado */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
