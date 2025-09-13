@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "./ContactForm.css";
+// src/components/ContactForm.jsx
+import { useState } from "react";
+import emailService from "../services/emailService"; // importas el service
+import "../css/ContactForm.css";
 
 const ContactForm = () => {
   const [nombre, setNombre] = useState("");
@@ -17,14 +18,14 @@ const ContactForm = () => {
       return;
     }
 
-    try {
-      const payload = {
-        destinatario: "jazminsolis2@gmail.com", // tu correo receptor
-        asunto: asunto,
-        mensaje: `Nombre: ${nombre}\nCorreo: ${emailCliente}\n\nMensaje:\n${mensaje}`,
-      };
+    const payload = {
+      destinatario: "jazminsolis2@gmail.com", // correo receptor
+      asunto: asunto,
+      mensaje: `Nombre: ${nombre}\nCorreo: ${emailCliente}\n\nMensaje:\n${mensaje}`,
+    };
 
-      const response = await axios.post("http://localhost:8093/send-email", payload);
+    try {
+      const response = await emailService.sendEmail(payload); // usamos el service
 
       if (response.status === 200) {
         setStatus("Correo enviado con éxito ✅");

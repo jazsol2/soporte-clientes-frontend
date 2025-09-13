@@ -109,3 +109,26 @@
   background-color: rgba(0,0,0,0.2);
   border-radius: 3px;
 }
+
+.chat-options-container {
+  display: flex;
+  flex-direction: column; /* Coloca los botones en columna */
+  align-items: stretch;   /* Los botones ocupan todo el ancho del contenedor */
+  margin-top: 10px;
+}
+
+.chat-option-button {
+  margin: 5px 0;          /* Espacio vertical entre botones */
+  padding: 14px 12px;     /* Más alto verticalmente */
+  border-radius: 5px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.chat-option-button:hover {
+  background-color: #0b5ed7;
+}
