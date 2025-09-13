@@ -1,14 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
+import ClienteService from "../services/ClienteService";
+import "../css/ChatModal.css";
 
-export default function ChatModal() {
+export default function ChatModal({ onClose }) {
   const [messages, setMessages] = useState([
-    { from: "skill", text: "¡Hola! Soy tu asistente Tigo 😃\nSelecciona una opción:\n1. Atención al cliente\n2. Contratar un servicio\n3. Reportar falla\n4. Hablar con un agente" }
+    { from: "skill", text: "¡Hola! Soy tu asistente Tigo 😃\nSelecciona una opción:" }
   ]);
   const [input, setInput] = useState("");
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
-    tipo: "",
+    tipo: "",      // 1: Atención al cliente, 2: Contratar servicio
     nombre: "",
     apellido: "",
     email: "",
@@ -17,76 +18,108 @@ export default function ChatModal() {
     mensaje: ""
   });
 
+  // Cuando el usuario selecciona opción 1 o 2
+  const handleOptionClick = (option) => {
+    setFormData({ ...formData, tipo: option });
+    setMessages(prev => [
+      ...prev,
+      { from: "skill", text: "¡Gracias! 😎 ¿Puedes ingresar tu número de cédula, RUC o pasaporte?" }
+    ]);
+    setStep(1);
+  };
+
+  // Función principal para manejar los mensajes
   const handleSend = async () => {
     if (!input) return;
-
     const newMsg = { from: "user", text: input };
     setMessages(prev => [...prev, newMsg]);
 
     try {
-      switch(step) {
-        case 0:
-          if (["1","2","3","4"].includes(input)) {
-            setFormData({ ...formData, tipo: input });
-            setMessages(prev => [...prev, { from: "skill", text: "Para comenzar, ¿cuál es tu nombre?" }]);
-            setStep(1);
-          } else {
-            setMessages(prev => [...prev, { from: "skill", text: "Opción no válida, intenta de nuevo." }]);
+      switch (step) {
+
+        // Paso 1: Validar si el cliente existe
+        case 1:
+          try {
+            const response = await ClienteService.obtenerCliente(input).catch(() => null);
+
+            if (response && response.data) {
+              // Cliente encontrado
+              setFormData({ ...formData, cedula: input });
+              setMessages(prev => [
+                ...prev,
+                { from: "skill", text: "Cliente encontrado ✅" },
+                { from: "skill", text: formData.tipo === "1" ? "Para comenzar, ¿cuál es tu nombre?" : "Perfecto, te conectaré con un agente de ventas 😎" }
+              ]);
+
+              setStep(formData.tipo === "1" ? 2 : 99); // 99 = redirigir a WhatsApp para ventas
+            } else {
+              // Cliente no encontrado
+              setMessages(prev => [
+                ...prev,
+                { from: "skill", text: "No encontramos un cliente con esa cédula 😕. ¿Deseas registrarlo?" }
+              ]);
+              setStep(1); // Mantener en el mismo paso hasta que se registre
+            }
+          } catch (err) {
+            setMessages(prev => [
+              ...prev,
+              { from: "skill", text: "Ocurrió un error al validar la cédula, intenta más tarde." }
+            ]);
+            console.error(err);
           }
           break;
 
-        case 1:
+        // Paso 2: Nombre
+        case 2:
           setFormData({ ...formData, nombre: input });
           setMessages(prev => [...prev, { from: "skill", text: "Tu apellido?" }]);
-          setStep(2);
-          break;
-
-        case 2:
-          setFormData({ ...formData, apellido: input });
-          setMessages(prev => [...prev, { from: "skill", text: "Correo electrónico?" }]);
           setStep(3);
           break;
 
+        // Paso 3: Apellido
         case 3:
-          setFormData({ ...formData, email: input });
-          setMessages(prev => [...prev, { from: "skill", text: "Número de cédula, RUC o pasaporte?" }]);
+          setFormData({ ...formData, apellido: input });
+          setMessages(prev => [...prev, { from: "skill", text: "Correo electrónico?" }]);
           setStep(4);
           break;
 
+        // Paso 4: Email
         case 4:
-          setFormData({ ...formData, cedula: input });
-
-          // Verificar si el cliente ya existe
-          const cliente = await axios.get(`http://localhost:8082/clientes/${input}`).catch(() => null);
-
-          if(!cliente) {
-            await axios.post("http://localhost:8082/clientes", formData);
-          }
-
-          if(formData.tipo === "2") {
-            setMessages(prev => [...prev, { from: "skill", text: "¿Qué servicio deseas contratar?" }]);
-          } else {
-            setMessages(prev => [...prev, { from: "skill", text: "Describe tu solicitud o problema:" }]);
-          }
+          setFormData({ ...formData, email: input });
+          setMessages(prev => [
+            ...prev,
+            { from: "skill", text: formData.tipo === "1" ? "Describe tu solicitud o problema:" : "Describe el servicio que deseas contratar:" }
+          ]);
           setStep(5);
           break;
 
+        // Paso 5: Mensaje/servicio
         case 5:
-          if(formData.tipo === "2") setFormData({ ...formData, servicio: input });
-          else setFormData({ ...formData, mensaje: input });
+          if (formData.tipo === "1") setFormData({ ...formData, mensaje: input });
+          else setFormData({ ...formData, servicio: input });
 
-          // Crear ticket
-          const ticketResp = await axios.post("http://localhost:8083/tickets", formData);
-          const ticketId = ticketResp.data.id;
+          // Crear cliente si no existía
+          if (formData.tipo === "1" && !formData.nombre) {
+            await ClienteService.crearCliente(formData);
+          }
 
-          // Notificación y email
-          await axios.post("http://localhost:8081/notificaciones", { ticketId, texto: "Ticket creado" });
-          await axios.post("http://localhost:8093/send-email", { ...formData, ticketId });
+          // Mensaje final según tipo
+          if (formData.tipo === "1") {
+            setMessages(prev => [
+              ...prev,
+              { from: "skill", text: "¡Gracias! Un agente de soporte se pondrá en contacto contigo." }
+            ]);
+          } else {
+            // Redirigir a WhatsApp
+            const numeroVentas = "593987654321"; // Coloca el número de ventas Tigo
+            const mensajeWhatsapp = `Hola, quiero contratar el servicio: ${formData.servicio}`;
+            window.open(`https://wa.me/${numeroVentas}?text=${encodeURIComponent(mensajeWhatsapp)}`, "_blank");
+            setMessages(prev => [
+              ...prev,
+              { from: "skill", text: "Te estoy redirigiendo a un agente de ventas por WhatsApp 😎" }
+            ]);
+          }
 
-          // Asignar agente automático
-          await axios.patch(`http://localhost:8083/tickets/${ticketId}/asignar/1`);
-
-          setMessages(prev => [...prev, { from: "skill", text: "¡Gracias! Un agente se pondrá en contacto contigo." }]);
           setStep(6);
           break;
 
@@ -102,17 +135,44 @@ export default function ChatModal() {
   };
 
   return (
-    <div style={{ position: "fixed", bottom: 20, right: 20, width: 350, border: "1px solid #ccc", borderRadius: 10, background: "white", display: "flex", flexDirection: "column", maxHeight: "500px" }}>
-      <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{ textAlign: m.from === "user" ? "right" : "left", margin: "5px 0" }}>
-            <span style={{ background: m.from === "user" ? "#0d6efd" : "#f1f1f1", color: m.from === "user" ? "white" : "black", padding: "5px 10px", borderRadius: 10, display: "inline-block" }}>{m.text}</span>
+    <div className="chat-modal-overlay">
+      <div className="chat-modal">
+        <div className="chat-header">
+          Chat Tigo
+          <button className="chat-close-btn" onClick={onClose}>×</button>
+        </div>
+
+        <div className="chat-messages">
+          {messages.map((m, i) => (
+            <div key={i} className={`chat-message ${m.from === "user" ? "user" : "bot"}`}>
+              {m.text}
+            </div>
+          ))}
+
+          {step === 0 && (
+            <div className="chat-options-container">
+              <button className="chat-option-button" onClick={() => handleOptionClick("1")}>
+                Atención al cliente
+              </button>
+              <button className="chat-option-button" onClick={() => handleOptionClick("2")}>
+                Contratar un servicio
+              </button>
+            </div>
+          )}
+        </div>
+
+        {step > 0 && step !== 99 && (
+          <div className="chat-input-container">
+            <input
+              className="chat-input"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              placeholder="Escribe un mensaje..."
+            />
+            <button className="chat-send-btn" onClick={handleSend}>Enviar</button>
           </div>
-        ))}
-      </div>
-      <div style={{ display: "flex", borderTop: "1px solid #ccc" }}>
-        <input style={{ flex: 1, padding: 10, border: "none" }} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()} placeholder="Escribe un mensaje..." />
-        <button style={{ padding: 10, background: "#0d6efd", color: "white", border: "none" }} onClick={handleSend}>Enviar</button>
+        )}
       </div>
     </div>
   );
