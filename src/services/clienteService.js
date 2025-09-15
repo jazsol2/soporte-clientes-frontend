@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/clientes";
+const API_URL = "http://localhost:8080/clientes";
 
-const obtenerCliente = async (id) => {
-  return axios.get(`${API_URL}/${id}`);
+// Cambié `id` por `documento` y la URL a `/documento/${documento}`
+const obtenerCliente = async (documento) => {
+  return axios.get(`${API_URL}/documento/${documento}`);
 };
 
 const crearCliente = async (cliente) => {

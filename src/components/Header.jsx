@@ -9,7 +9,6 @@ function Header() {
         <Link to="/">Inicio</Link>
         <Link to="/faq">Preguntas Frecuentes</Link>
         <Link to="/contact">Contacto</Link>
-        <Link to="/cuenta">Cuenta</Link>
       </nav>
     </header>
   );
