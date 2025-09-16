@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/clientes";
+const API_URL = "http://localhost:8082/clientes";
 
 // Cambié `id` por `documento` y la URL a `/documento/${documento}`
 const obtenerCliente = async (documento) => {
