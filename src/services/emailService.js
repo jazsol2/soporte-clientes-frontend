@@ -1,10 +1,14 @@
-// src/services/emailService.js
 import axios from "axios";
+const API_URL = "http://localhost:8093/send-email";
 
-const API_URL = "http://localhost:8080/send-email"; // Cambia al endpoint real de tu microservicio
-
-const sendEmail = (data) => {
-  return axios.post(API_URL, data);
+const sendEmail = async ({ destinatario, asunto, mensaje }) => {
+  try {
+    const res = await axios.post(API_URL, { destinatario, asunto, mensaje });
+    return res.status;
+  } catch (err) {
+    console.error("EmailService error:", err.response?.data || err.message);
+    throw err;
+  }
 };
 
 export default { sendEmail };

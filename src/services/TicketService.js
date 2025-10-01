@@ -1,12 +1,13 @@
 import axios from "axios";
 
 
-const API_URL = "http://localhost:8080/tickets"; 
+const API_URL = "http://localhost:8083/tickets"; 
 
 // Crear un nuevo ticket
 export const crearTicket = async (ticketData) => {
   try {
     const { data } = await axios.post(API_URL, ticketData);
+    console.log("Tickets recibidos:", data);
     return data;
   } catch (error) {
     console.error("Error al crear el ticket:", error.response?.data || error.message);

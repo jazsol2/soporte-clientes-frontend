@@ -1,6 +1,6 @@
 // src/components/ContactForm.jsx
 import { useState } from "react";
-import emailService from "../services/emailService"; // importas el service
+import emailService from "../services/emailService";
 import "../css/ContactForm.css";
 
 const ContactForm = () => {
@@ -19,26 +19,27 @@ const ContactForm = () => {
     }
 
     const payload = {
-      destinatario: "jazminsolis2@gmail.com", // correo receptor
+      destinatario: "jazminsolis2@gmail.com",
       asunto: asunto,
       mensaje: `Nombre: ${nombre}\nCorreo: ${emailCliente}\n\nMensaje:\n${mensaje}`,
     };
 
     try {
-      const response = await emailService.sendEmail(payload); // usamos el service
+      const statusCode = await emailService.sendEmail(payload);
 
-      if (response.status === 200) {
-        setStatus("Correo enviado con éxito ✅");
+      if (statusCode === 200 || statusCode === 201) {
+        setStatus("Correo enviado con éxito");
         setNombre("");
         setEmailCliente("");
         setAsunto("");
         setMensaje("");
       } else {
-        setStatus("Error al enviar correo. ❌");
+        setStatus("Error al enviar correo, revisa la consola.");
+        console.log("Respuesta inesperada:", statusCode);
       }
     } catch (error) {
       console.error(error);
-      setStatus("Error al enviar correo. ❌");
+      setStatus("Error al enviar correo.");
     }
   };
 

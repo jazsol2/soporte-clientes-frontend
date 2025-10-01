@@ -60,25 +60,51 @@
   flex-direction: column;
 }
 
-/* Mensajes del asistente / agente */
-.chat-message.bot, .chat-message.skill {
-  background-color: #e1f0ff;
-  color: #333;
-  padding: 8px 12px;
-  border-radius: 15px;
+/* Nombre del remitente */
+.chat-message .sender {
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+/* Mensajes del agente */
+.chat-message.agent {
+  background-color: #f1f1f1; /* gris suave */
+  color: #222;
+  padding: 10px 15px;
+  border-radius: 15px 15px 15px 0;
   margin-bottom: 10px;
+  max-width: 70%;
+  align-self: flex-start;  /* izquierda */
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+/* Mensajes del skill/bot */
+.chat-message.skill {
+  background-color: #fff3cd; /* amarillo claro */
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 15px;
+  margin: 10px auto; /* centrado */
   max-width: 80%;
+  align-self: center;
+  text-align: center;
+  font-style: italic;
+  border: 1px dashed #e0c24d;
 }
 
 /* Mensajes del usuario */
 .chat-message.user {
-  background-color: #0d6efd;
+  background-color: #0d6efd; /* azul */
   color: white;
-  padding: 8px 12px;
-  border-radius: 15px;
+  padding: 10px 15px;
+  border-radius: 15px 15px 0 15px;
   margin-bottom: 10px;
-  align-self: flex-end;
-  max-width: 80%;
+  max-width: 70%;
+  align-self: flex-end; /* derecha */
+  text-align: right;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 /* Input y botón enviar */
